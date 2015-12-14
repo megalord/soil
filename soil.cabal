@@ -1,0 +1,59 @@
+name:                soil
+version:             0.0.1.0
+synopsis:            Curl Helper
+description:         Please see README.md
+homepage:            http://github.com/megalord/soil#readme
+license:             BSD3
+license-file:        LICENSE
+author:              Jordan Griege
+category:            Web
+build-type:          Simple
+-- extra-source-files:
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Network.Soil
+  other-modules:       Network.Soil.Config
+                     , Network.Soil.Curl
+                     , Network.Soil.Request
+                     , Network.Soil.Utils
+  build-depends:       base >= 4.7 && < 5
+                     , aeson >= 0.8.0.2
+                     , bytestring >= 0.10.6
+                     , case-insensitive >= 1.2.0
+                     , containers >= 0.5.6
+                     , directory >= 1.2.2
+                     , errors >= 2.0.1
+                     , hashable >= 1.2.3
+                     , http-client >= 0.4.24
+                     , http-conduit >= 2.1.8
+                     , http-types >= 0.8.6
+                     , text >= 1.2.1
+                     , time >= 1.5.0
+                     , unordered-containers >= 0.2.5
+                     , yaml >= 0.8.15
+  default-language:    Haskell2010
+
+executable soil
+  hs-source-dirs:      app
+  main-is:             Main.hs
+  other-modules:       Paths_soil
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , http-conduit >= 2.1.8
+                     , soil
+  default-language:    Haskell2010
+
+test-suite soil-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             Spec.hs
+  build-depends:       base
+                     , soil
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  default-language:    Haskell2010
+
+source-repository head
+  type:     git
+  location: https://github.com/megalord/soil
