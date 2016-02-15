@@ -16,6 +16,7 @@ library
   exposed-modules:     Network.Soil
   other-modules:       Network.Soil.Config
                      , Network.Soil.Curl
+                     , Network.Soil.Options
                      , Network.Soil.Request
                      , Network.Soil.Utils
   build-depends:       base >= 4.7 && < 5
