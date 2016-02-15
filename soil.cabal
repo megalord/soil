@@ -40,8 +40,11 @@ executable soil
   hs-source-dirs:      app
   main-is:             Main.hs
   other-modules:       Paths_soil
+                     , Plugins
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
+                     , directory
+                     , hint
                      , http-conduit >= 2.1.8
                      , soil
   default-language:    Haskell2010
