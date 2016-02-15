@@ -6,10 +6,10 @@ module Plugins
 import Control.Monad (join)
 import Data.Either (rights)
 import Language.Haskell.Interpreter
-import Network.Soil (Request, configDir, split, (>=>=>))
+import Network.Soil (Options, Request, configDir, split, (>=>=>))
 import System.Directory (getDirectoryContents)
 
-type Plugin = Request -> IO (Either String Request)
+type Plugin = Options -> Request -> IO (Either String Request)
 
 listDirectory :: FilePath -> IO [FilePath]
 listDirectory = (filter f <$>) . getDirectoryContents
@@ -21,21 +21,21 @@ pluginDir = (++ "plugins/") <$> configDir
 pluginFiles :: IO [FilePath]
 pluginFiles = pluginDir >>= listDirectory
 
-interpreter :: String -> Interpreter Plugin
-interpreter plugin = do
-  (++ plugin) <$> liftIO pluginDir >>= \fp -> loadModules [fp]
+interpreter :: FilePath -> Interpreter Plugin
+interpreter file = do
+  (++ file) <$> liftIO pluginDir >>= \fp -> loadModules [fp]
   setImportsQ [(name, Just name), ("Network.Soil", Nothing)]
   interpret (name ++ ".mapReq") (as :: Plugin)
-  where name = head . split '.' $ plugin
+  where name = head . split '.' $ file
 
-importPlugin :: String -> IO (Either String Plugin)
-importPlugin plugin = either (Left . show) Right <$> runInterpreter (interpreter plugin) 
+importPlugin :: FilePath -> IO (Either String Plugin)
+importPlugin = (either (Left . show) Right <$>) . runInterpreter . interpreter
 
 plugins :: IO [Plugin]
 plugins = rights <$> (pluginFiles >>= sequence . map importPlugin)
 
 apply :: Plugin
-apply = join . (foldCompose <$> plugins <*>) . return
+apply opts = join . (foldCompose . map (\f -> f opts) <$> plugins <*>) . return
   where foldCompose = foldl (>=>=>) (return . Right)
 
 list :: IO [String]

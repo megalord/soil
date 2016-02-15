@@ -22,7 +22,7 @@ run (opts, args)
   | otherwise = makeRequest opts args >>= return . (curl <$>)
 
 makeRequest :: Options -> [String] -> IO (Either String Request)
-makeRequest opts [m, path] = (fmap . fmap) (withMethod m) req >>= either (return . Left) Plugins.apply
+makeRequest opts [m, path] = (fmap . fmap) (withMethod m) req >>= either (return . Left) (Plugins.apply opts)
   where req = getDomain (optApi opts) (optEnv opts) >>=
           mapRightToM ((Right <$>) . parseUrl . flip (++) path)
 makeRequest opts [m, path, body] = makeRequest opts [m, path] >>= return . (withBody body <$>)
